@@ -1,32 +1,35 @@
-// One Word for Your Wi-Fi — make.fun entry
-// Writes a single word describing home Wi-Fi to /output/entry.txt.
+// One Word for Your Wi-Fi — make.fun entry.
 //
-// The word: "Teenager"
-// Home Wi-Fi behaves exactly like a teenager: it works brilliantly when
-// it feels like it, sulks and vanishes into its room for no reason, and
-// ignores you at the worst possible moment — right in the middle of a
-// video call. Everyone recognises it instantly, no explanation needed,
-// and it even works as a Wi-Fi network name.
+// The entry is one word for the home Wi-Fi, written verbatim to
+// /output/entry.txt with no trailing newline. The word below was
+// picked because home Wi-Fi acts like a teenager: brilliant when
+// it feels like it, gone without warning, and deaf at the worst
+// moment — mid video call.
 
 import { mkdirSync, writeFileSync } from "node:fs";
-import { dirname } from "node:path";
+import { dirname, join } from "node:path";
 
-const ENTRY_WORD = "Teenager";
-const OUTPUT_PATH = "/output/entry.txt";
+// The entry word: 8 characters, inside the 1-20 gate.
+const entryWord = "Teenager";
 
-function main(): void {
-  const word = ENTRY_WORD.trim();
+// Output location for the entry text.
+const entryFile = join("/output", "entry.txt");
 
-  if (word.length < 1 || word.length > 20) {
-    throw new Error(`Entry word must be 1-20 characters, got ${word.length}.`);
+function checkWord(word: string): string {
+  const cleaned = word.trim();
+  if (cleaned.length < 1 || cleaned.length > 20) {
+    throw new Error(`Entry word must be 1-20 characters, got ${cleaned.length}.`);
   }
-
-  if (/\s/.test(word)) {
+  if (/\s/.test(cleaned)) {
     throw new Error("Entry must be a single word with no spaces.");
   }
-
-  mkdirSync(dirname(OUTPUT_PATH), { recursive: true });
-  writeFileSync(OUTPUT_PATH, word, "utf8");
+  return cleaned;
 }
 
-main();
+function run(): void {
+  const word = checkWord(entryWord);
+  mkdirSync(dirname(entryFile), { recursive: true });
+  writeFileSync(entryFile, word, "utf8");
+}
+
+run();
